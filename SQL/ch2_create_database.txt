@@ -1,0 +1,143 @@
+2. MySQL 이해 및 실습(설치를 진행함)
+MySQL은 세계에서 가장 많이 쓰이는 오픈 소스 관계형 데이터베이스 관리 시스템
+
+3. SQL DDL(Data Definition Language) 이해 및 실습
+3.1 데이터베이스
+    !!!!!!!!!!!!!!!데이터베이스 안에는 여러 개의 데이터베이스 이름이 존재한다.!!!!!!!!!!!!!!!!!!!!
+
+1. 데이터베이스 생성
+mysql> CREATE DATABASE dbname;
+ 
+2. 데이터베이스 목록 보기
+mysql> SHOW DATABASES;
+ 
+3. dbname 데이터베이스 사용 시
+mysql> USE dbname;
+ 
+4. dbname 데이터베이스 삭제
+mysql> DROP DATABASE [IF EXISTS] dbname;
+
+(IF EXISTS 옵션은 해당 데이타베이스 이름이 없더라도 오류를 발생시키지 말라는 의미)
+
+
+3.2 테이블
+3.2.1 테이블 생성
+    기본 문법 (CREATE TABLE 구문)
+    CREATE TABLE 테이블명 (
+        컬럼명 데이터형, #id의 데이터형 ###필드(컬럼)별로 하나씩 나열(즉 속성들을 나열)
+        컬럼명 데이터형, #상품명의 데이터형(string)
+        .
+        .
+        기본키 셋
+    );  ##마지막에 꼭 세미콜론 해줘야 함
+
+    예시)
+    CREATE TABLE myproduct(
+        MYKEY INT, 
+        ID STRING, #ID 필드(컬럼)의 데이터형은 string
+        TITLE VARCHAR #TITLE 필드(컬럼)의 데이터형은 TEXT -->MySQL에서는 string보다는 TEXT,VARCHAR
+        ORI_PRICE INT #ORI_PRICE 필드(칼럼)의 데이터형은 INT
+        DISCOUNT_PERCENT INT,
+        DELEVERY STRING,
+        PRIMARY KEY(KEY) #PRIMARY KEY(한 테이블(Table)의 각 로우(Row)를 유일하게 식별해주는 컬럼(Column)-속성)는 KEY필드를 이용하겠다.
+    );
+
+    숫자 타입의 컬럼 정의 문법
+        mysql> CREATE TABLE dave_table (
+            -> id INT [UNSIGNED] [NOT NULL] [AUTO_INCREMENT],
+
+        id : 컬럼명, 가능한 영어 소문자 중심으로 명명
+        INT : 컬럼에 대한 데이터 타입 선언 (참고4 참조)
+        [UNSIGNED] : 옵션 사항
+                    예) TINYINT 로 지정시 -128 ~ +127 
+                        TINYINT UNSIGNED 로 지정시 0 ~ 255
+        [NOT NULL] : NOT NULL 명시하면 데이터 입력시, 해당 컬럼 데이터에 값이 할당되지 않는 경우를 허락하지 않겠다는 의미
+        [AUTO_INCREMENT] : AUTO_INCREMENT 명시하면, 해당 테이블에 데이터 등록시 해당 컬럼은 자동으로 숫자가 1씩 증가하여 저장됨
+                           해당 컬럼은 양의 정수만 등록할 수 있어야 하고, 테이블 안에서 AUTO_INCREMENT 컬럼은 하나만 지정 가능함
+
+    문자 타입의 컬럼 정의 문법
+        mysql> CREATE TABLE dave_table (
+            -> name VARCHAR(50),
+
+        name : 컬럼명, 가능한 영어 소문자 중심으로 명명
+        VARCHAR(n) : 컬럼에 대한 문자형 데이터 타입 선언,n은 문자열 크기의 범위
+
+    시간 타입의 컬럼 정의 문법
+        mysql> CREATE TABLE dave_table (
+            -> ts DATE,
+
+        ts : 컬럼명, 가능한 영어 소문자 중심으로 명명
+        DATE : 컬럼에 대한 시간 타입 선언
+        이 외에도 TIME,DATETIME,TIMESTAMP,YEAR(n) 등이 있음
+
+    Primary Key 가 될 필드 지정 문법
+        mysql> CREATE TABLE dave_table (
+            -> 컬럼명 데이터형,
+            -> .
+            -> PRIMARY KEY(컬럼명1, 컬럼명2, ...)
+            -> );
+
+        컬럼명1, 컬럼명2, ... : PRIMARY KEY 로 지정할 컬럼명을 넣음 (한 개 이상을 지정할 수 있음, 보통은 한 개를 지정함)
+                PRIMARY KEY 로 지정할 컬럼은 NULL 값을 등록할 수 없어야 하고, 컬럼 안에서 같은 값이 없도록 각 값이 유일해야 함
+                따라서, 해당 컬럼은 보통 NOT NULL(NULL 값 방지) AUTO_INCREMENT(유일함) 선언이 되어 있는 경우가 많음
+        예)
+        CREATE TABLE mytable (
+        id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        name VARCHAR(50) NOT NULL,
+        modelnumber VARCHAR(15) NOT NULL,
+        series VARCHAR(30) NOT NULL,
+        PRIMARY KEY(id)   #######ID필드를 PRIMARY KEY로 쓰겠다.
+        );
+
+        [[테이블 잘못만들어졌으면 DROP TABLE IF EXISTS dbname; 로 테이블 삭제 후 재생성]]
+
+3.2.1 테이블 조회
+    기본 문법 (SHOW TABLES)
+    mysql> SHOW TABLES;    >>>>하나의 DATABASE에 여러개의 TABLE들이 있는 거임
+    +----------------+
+    | Tables_in_dave |
+    +----------------+
+    | mytable        |
+    +----------------+
+    1 row in set (0.00 sec)
+
+    기본 문법 (DESC 테이블명) -->TABLE내부의 구조가 궁금할 때
+    mysql> desc mytable;
+    +-------------+------------------+------+-----+---------+----------------+
+    | Field       | Type             | Null | Key | Default | Extra          |
+    +-------------+------------------+------+-----+---------+----------------+
+    | id          | int(10) unsigned | NO   | PRI | NULL    | auto_increment |
+    | name        | varchar(50)      | NO   |     | NULL    |                |
+    | modelnumber | varchar(15)      | NO   |     | NULL    |                |
+    | series      | varchar(30)      | NO   |     | NULL    |                |
+    +-------------+------------------+------+-----+---------+----------------+
+    4 rows in set (0.00 sec)
+
+
+3.2.3 테이블 구조 수정
+    1.테이블에 새로운 "컬럼 추가"
+    문법: ALTER TABLE [테이블명] ADD COLUMN [추가할 컬럼명][추가할 컬럼 데이터형] 
+    mysql> ALTER TABLE mytable ADD COLUMN model_type varchar(10) NOT NULL;
+
+    2.테이블 컬럼 "타입 변경"
+    문법: ALTER TABLE [테이블명] MODIFY COLUMN [변경할 컬럼명][변경할 컬럼 타입]
+    mysql>ALTER TABLE mytable MODIFY COLUMN name varchar(20) NOT NULL; 
+
+    3.테이블 컬럼 "이름 변경"
+    문법: ALTER TABLE [테이블명] CHANGE COLUMN [기존 컬럼 명][변경할 컬럼 명][변경할 컬럼 타입]
+    mysql>ALTER TABLE mytable CHANGE COLUMN modelnumber model_num varchar(10) NOT NULL;
+
+    4.테이블 "컬럼 삭제"
+    문법: ALTER TABLE [테이블명] DROP COLUMN [삭제할 컬럼 명]
+    mysql>ALTER TABLE mytable DROP COLUMN series;
+
+    ex)
+    ALTER TABLE mytable MODIFY COLUMN name varchar(20) NOT NULL;
+    ALTER TABLE mytable CHANGE COLUMN modelnumber model_num varchar(10) NOT NULL;
+    ALTER TABLE mytable CHANGE COLUMN series model_type varchar(10) NOT NULL;
+
+
+
+
+            
+
