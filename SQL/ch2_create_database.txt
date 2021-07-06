@@ -130,6 +130,7 @@ mysql> DROP DATABASE [IF EXISTS] dbname;
     4.테이블 "컬럼 삭제"
     문법: ALTER TABLE [테이블명] DROP COLUMN [삭제할 컬럼 명]
     mysql>ALTER TABLE mytable DROP COLUMN series;
+    
 
     ex)
     ALTER TABLE mytable MODIFY COLUMN name varchar(20) NOT NULL;
