@@ -32,18 +32,50 @@ fetchall(): Fetch all the rows   ###모든 row를 가져옴  ---> 각 row들을 
                                                       ---> 예) ((1,2,3,4),(5,6,7,8))
 fetchmany(size=None): Fetch several rows    ### 몇 개의 row만 가져옴
 fetchone(): Fetch the next row     ###테이블에서 제일 위의 row만 가져옴
-'''
+
 
 sql="""select * from product;"""
 
- 
+#결과를 바로 확인하려면 우선, <<<select구문을 실행하고나서>>>!!!! fecth~함수로 읽어와야함!
 #일단 부캐에서 sql구문을 실행
 cursor.execute(sql)
 result=cursor.fetchmany(size=7)#result 안에 ^^^튜플로 반환된 결과^^^가 들어있는 거임
 
 for row in result:
     print(row)
+'''
 
+
+#3. update(수정하기)
+'''
+sql=""" UPDATE product SET
+    TITLE='뷔스티에 썸머 가디건',
+    ORI_PRICE=33000,
+    DISCOUNT_PRICE=9900,
+    DISCOUNT_PERCENT=70
+    WHERE PRODUCT_CODE='215673142';
+"""
+
+cursor.execute(sql)
+
+sql="""select * from product;"""  ####결과를 print를 통해 바로 확인하려면 우선! select 구문을 먼저 실행해주고나서! fectch함수 등으로 뽑아낸다.
+cursor.execute(sql)
+result=cursor.fetchall()
+
+for record in result:
+    print(record)
+'''
+
+#4. delete (삭제하기)
+sql="""DELETE FROM product WHERE PRODUCT_CODE='215673142';"""
+cursor.execute(sql)
+
+sql="SELECT * FROM product;"
+cursor.execute(sql)
+
+result=cursor.fetchall()
+for record in result:
+    print(record)
 
 
 db.commit()#이제 본캐에도 실행된 정보들을 업데이트
