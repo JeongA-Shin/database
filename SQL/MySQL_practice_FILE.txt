@@ -1,0 +1,14 @@
+'''
+# students.sql 파일로 SQL 실행하기 (sql구문들을 한 번에 저장하고 있는 sql파일을 불러와서 실행하기)
+mysql>SOURCE [해당 sql의 파일 위치]
+---->파일 위치는 터미널 명령을 실행하는 동일 디렉토리에 있거나, 해당 디렉토리까지 명시해줘야 함
+--->근데 해보니까 download받은 원본 파일의 위치를 해주면 동작이 되는데, 내가 복제해서 다른 폴더에 위치시키면 동작이 안 됨;;
+'''
+
+#테이블에 데이터 한번에 입력하기->csv로 저장되어있는 정보들을 한 번에 테이블에 입력하기
+# -->한 record당 일일히 insert하지 않아도, 파일을 불러옴으로써 한 번에 입력할 수 있음
+#"mysql> LOAD DATA INFILE 'CSV 데이터 파일' INTO TABLE student_mgmt.students (name, gender, birth, english, math, korean);"
+#-->그런데 현재는 보안의 문제로 cli로 이렇게 작업하는 것을 막아놓음. 따로 설정 등을 바꿔줘야 하는데, 현재는 workbench로 함
+
+
+
