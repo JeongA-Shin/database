@@ -23,7 +23,7 @@ db = pymysql.connect(
 
 #1)pandas.read_sql(쿼리(sql구문), 연결된 db(객체)-cursor가 아님!)---->db에 나의 쿼리를 전달하고 실행!(excute와 fecth..()함수+for문을 합친 것)
 SQL="select * from students"
-df=pd.read_sql(SQL,db) #df변수에 query의 결괏값이 담겨짐
+df=pd.read_sql(SQL,db)#read_sql: 테이블 읽어오는 함수  #df변수에 query의 결괏값이 담겨짐
 print(df)  #그냥 pymysql만 import하면, fetchall()등을 이용하고 for문등을 해야 보기가 쉬워지지만, pandas의 read_sql()을 사용함으로써 쉬워짐
 
 
