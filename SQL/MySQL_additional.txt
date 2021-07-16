@@ -107,14 +107,37 @@
         그리고 거기서 랭킹에서의 메인 카테고리가 all인 것에 한정해서 item의 필드 값인 provider의 row 개수를 출력
         (provider라는 필드 값이 items에만 있으므로 provider.count(*)가 아니라! items.provider.count(*) 이런 식으로 표현해줌)
 
+  연습2) 메인 카테고리가 패션의류인 서브 카테고리 포함, 패션의류 전체 베스트 상품에서 판매자별 베스트 상품 갯수가 5이상인 판매자와 베스트 상품갯수 출력해보기
+  (단계적으로, 점진적으로 아래에 쓰겠음)
+        1. 랭킹 테이블에서 메인카테고리가 패션의류인 레코드들을 뽑음 
+        SELECT * FROM ranking WHERE ranking.main_category="패션의류";
+
+        2. 이 때 랭킹테이블은 item테이블과 join된(연동된) 상태여야 함
+        SELECT * FROM ranking INNER JOIN items ON items.item_code=ranking.item_code WHERE ranking.main_category="패션의류"
+
+        3. JOIN된 테이블에서 provider가(provider필드는 item테이블꺼이므로 items.provider라고 씀) 몇 개 있는지 count 
+        --->GROUP BY를 통해 PROVIDER끼리 묶은 후!!!!!
+        SELECT items.provider.COUNT(*) FROM FROM ranking INNER JOIN items ON items.item_code=ranking.item_code 
+        WHERE ranking.main_category="패션의류" GROUP BY items.provider;
+
+        4. 5개 이상 - COUNT라는 집계함수가 있으므로 GROUP BY에 HAVING으로 조건 달아줌
+       ---> GROUP BY items.provider HAVING COUNT(*)>5;: 5개 이상의 레코드들을 가진 PROVIDER들을 기준으로 표를 묶음
+        SELECT items.provider.COUNT(*) FROM FROM ranking INNER JOIN items ON items.item_code=ranking.item_code 
+        WHERE ranking.main_category="패션의류" GROUP BY items.provider HAVING COUNT(*)>5;
+
+        5.최종
+        SELECT items.provider.COUNT(*) FROM FROM ranking INNER JOIN items ON items.item_code=ranking.item_code 
+        WHERE ranking.main_category="패션의류" GROUP BY items.provider HAVING COUNT(*)>5;
+
+
   
     ### 3.2 OUTER JOIN (참고)
-    * OUTER JOIN은 조인하는 테이블의 ON 절의 조건 중 한쪽의 데이터를 모두 가져옴
+    * OUTER JOIN은 조인하는 테이블의 ON 절의 조건 중 ""한쪽의 데이터를 모두"" 가져옴
     * OUTER JOIN은 LEFT OUTER JOIN, RIGHT OUTER JOIN 이 있음
    
     #### 3.2.1 LEFT OUTER JOIN
     - 예: 
-      ```mysql
+      ```
       SELECT * FROM customer_table C LEFT OUTER JOIN order_table O ON C.customer_id = O.customer_id
       ```
 
@@ -125,7 +148,6 @@
       SELECT * FROM customer_table C RIGHT OUTER JOIN order_table O ON C.customer_id = O.customer_id
       ```
   
-     <img src=\https://www.fun-coding.org/00_Images/mysql_right_outer_join.png\ />
   
     ## 4. 서브 쿼리 (MySQL SubQuery)
     * SQL문 안에 포함되어 있는 SQL문
