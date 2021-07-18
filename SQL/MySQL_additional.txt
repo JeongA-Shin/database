@@ -151,12 +151,12 @@
   
     ## 4. 서브 쿼리 (MySQL SubQuery)
     * SQL문 안에 포함되어 있는 SQL문
-      - SQL문 안에서 괄호() 를 사용해서, 서브쿼리문을 추가할 수 있음
-    * 테이블과 테이블간의 검색시, 검색 범위(테이블 중 필요한 부분만 먼저 가져오도록)를 좁히는 기능에 주로 사용
+      - SQL문 안에서 <<<괄호() 를 사용해서, 서브쿼리문을 추가할 수 있음>>>
+    * 테이블과 테이블간의 검색시, <<<검색 범위(테이블 중 필요한 부분만 먼저 가져오도록)를 좁히는 기능에 주로 사용>>>
   
     ### 4.1. 서브쿼리(Sub Query) 사용법
     * JOIN은 출력 결과에 여러 테이블의 열이 필요한 경우 유용
-    * 대부분의 서브쿼리(Sub Query) 는 JOIN 문으로 처리가 가능
+    * 대부분의 서브쿼리(Sub Query) 는 <JOIN 문으로 처리가 가능>
    
     #### 예1: 서브카테코리가 '여성신발'인 상품 타이틀만 가져오기
     - JOIN SQL을 사용해서 작성하는 방법
@@ -168,6 +168,12 @@
     ```
     - **서브쿼리를 사용해서 작성하는 방법**
       - 컬럼값 IN 서브쿼리 출력값 -> 컬럼값과 서브쿼리값이 같을 때 
+    ---> 즉! items 에서 title을 가져오되, IN조건인 sub_category는 여성신발이고, 랭킹 테이블에 있는 아이템코드에도! 해당되는 
+         아이템에서 가져와라
+    ---> 즉!!! title을 items 테이블에서 가져오되, IN 조건에 반드시 해당되도록 where조건도 만족시키도록함
+         (where 조건이 더 큰 범위의 집합이고, IN 조건은 그보다 더 자세한(부분집합), 
+          즉 여기서 where인 item_code가 더 작은 집합/자세한 조건인 IN 구문에도 해당되는 것으로 가지고 옴!! )
+
     ```mysql
         SELECT title 
         FROM items
@@ -208,26 +214,22 @@
         (SELECT * FROM  atoz_table)
     ```
   
-    <div class=\alert alert-block alert-warning\>
-    <font color=\blue\ size=\4em\>연습문제</font><br>
+    연습1)
     메인 카테고리별로 할인 가격이 10만원 이상인 상품이 몇개 있는지를 출력해보기
-    </div>
-   
-    <div class=\alert alert-block alert-warning\>
-    <font color=\blue\ size=\4em\>다양한 복합쿼리 연습문제</font><br>
+      SELECT main_category.COUNT(*) FROM ranking 
+      WHERE item_code IN (SELECT item_code FROM items WHERE dis_price>10000)
+      GROUP BY main_category
+
+    --->일단 main_category별로 묶고(main_cateogry를 중심으로 테이블을 정리하고,
+    SELECT main_category.COUNT(*) FROM ranking로 main_category별 record 개수를 뽑아냄 )
+    
+    연습2)
     메인 카테고리, 서브 카테고리에 대해, 평균할인가격과 평균할인율을 출력해보기 (다양한 SQL 문법 활용)
-    </div>
+    SELECT ranking.main_category, ranking.sub_category, AVG(items.dis_price), AVG(items.dis_percent) FROM items
+    INNER JOIN ranking ON items.item_code=ranking.item_code
+    GROUP BY ranking.main_category,ranking.sub_category
+    
   
-    <div class=\alert alert-block alert-warning\>
-    <font color=\blue\ size=\4em\>다양한 복합쿼리 연습문제</font><br>
-    판매자별, 베스트상품 갯수, 평균할인가격, 평균할인율을 베스트상품 갯수가 높은 순으로 출력해보기 (다양한 SQL 문법 활용)
-    </div>
-  
-    <div class=\alert alert-block alert-warning\>
-    <font color=\blue\ size=\4em\>다양한 복합쿼리 연습문제</font><br>
-    각 메인 카테고리에서 베스트 상품 갯수가 20개 이상인 판매자의 판매자별 평균할인가격, 평균할인율, 베스트 상품 갯수 출력해보기 (다양한 SQL 문법 활용)
-    </div>
-  
-   
+    
   
   
