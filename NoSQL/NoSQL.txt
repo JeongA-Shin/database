@@ -60,7 +60,7 @@ MongoDB Document 예)
 1.3. MongoDB 데이터 구조
     MongoDB: Database > Collection(table대신) > Document(row 대신에. column이라는 개념이 없다.)
     RDBMS: Database > Table > data
-    RDBMS의 table이 아니라, collection 에 JSON 형태의 Document를 넣습니다.
+    !!!!RDBMS의 table이 아니라, collection 에 JSON 형태의 Document를 넣습니다.
     Document 하나가 하나의 로우(레코드)임
 
     MongoDB Database
@@ -68,3 +68,48 @@ MongoDB Document 예)
     MongoDB Collection
         Collection은 MongoDB Document의 집합
         RDBMS Table과 유사한 개념, 단 정규화된 데이터 구조, 즉 Schema가 정의되어 있지 않음
+
+
+3.2. Robomongo에서 커멘드 입력해보기 (실습)
+    Right-click (Server) -> Open Shell
+    show dbs - 전체 데이터베이스 열람
+    use DB 이름 - 데이터베이스 선택 (없으면 데이터베이스 생성)
+
+    예) use dave_db - dave_db 데이터베이스 선택
+    show collections - 선택된 데이터베이스의 콜렉션 열람
+
+    db.Collection 이름.함수() 로 해당 컬렉션의 데이터 열람 및 조작
+    예) db.test.find() - test 컬렉션에서 전체 Document 검색
+    데이터베이스 생성
+    use dave_db
+    데이터베이스 현황 확인
+    db
+    db.stats()
+    collection 생성 및 삭제
+    db.createCollection("employees", {capped:true, size:10000})
+    Right-click (server) -> Click Refresh -> Go to dave_db -> Go to Collections -> Check employees
+    capped:true 최초 제한된 크기로 생성된 공간에서만 데이터를 저장하는 설정 (고성능, 저장공간차면 기존 공간 재사용, 일정시간만 저장하는 로그에 적합)
+    db.employees.isCapped()
+    db.employees.drop()
+    db.createCollection("employees")
+    db.employees.isCapped()
+    db.employees.drop()
+    db.createCollection("employees", {capped:true, size:10000})
+    collection 확인
+    show collections
+    db.employees.stats()
+    collection 이름 변경
+    db.employees.renameCollection("emp")
+    collection 삭제
+    db.emp.drop()
+
+
+
+
+
+3.3. SQL과 간단 비교 - mongodb collection 생성/변경
+collection 생성 (원하는 타임으로 데이터를 바로 넣으면 됨)
+PRIMARY KEY를 위한 별도 컬럼 만들 필요 없음.
+mongodb는 collection에서 _id가 각 Document마다 자동생성되어 primary key 역햘을 함
+컬럼마다 데이터 타입을 정할 필요 없음 ("컬럼명": 컬럼값 이 기본 형태임)
+
