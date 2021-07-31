@@ -1,3 +1,6 @@
+#final_mongo_craw.py 에 최종본으로(깔끔히 정리된 것+여러페이지) 해놓음
+
+
 #request method 에 따라 다름
 #GET:각 페이지에 접속할 때마다 주소가 다름 -->request.get(....)
 #주소에 일정한 정보들이 들어있음 예)www.cine21.rank/actor....
@@ -182,5 +185,6 @@ for index,actor in enumerate(actors):
     
 
 
-
+for myactor in actor_info_list:
+    print(myactor)
 
