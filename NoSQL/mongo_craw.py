@@ -74,9 +74,10 @@ for actor in actors:
     print(re.sub("\(\w+\)", "",actor_data))'''
 
 
+"""
+#5. 배우 이름을 클릭해서 전환된 페이지에 나오는 상세 정보 출력하기
 actor_info_list=list()
 
-#5. 배우 이름을 클릭해서 전환된 페이지에 나오는 상세 정보 출력하기
 for actor in actors:
     actor_data=actor.get_text()
     print(re.sub("\(\w+\)", "",actor_data)) #이름 출력
@@ -142,5 +143,44 @@ for index,actor in enumerate(actors):
         movie_title_list.append(movie_title.get_text()) #필모들을 리스트로 만들기
     print("출연영화: ",movie_title_list)    
 
+"""
 
-##7. 지금까지의 데이터들 총 통합해서 하나의 자료형으로 만들기   
+##7. 지금까지의 데이터들 총 통합/위의 코드들 총 통합해서 하나의 코드로 만들기. (하나의 자료형으로 만들기)   
+actor_info_list=list()
+actors=soup.select('div.name > a') #리스트로 반환됨, 제일 위에서 정의된 것임
+hits=soup.select('ul.num_info > li > strong')
+movies=soup.select('ul.mov_list')
+
+for index,actor in enumerate(actors):
+    actor_name=re.sub("\(\w+\)", "",str(actor.get_text())) #<a href="/db/person/info/?person_id=30235">진경(1편)</a>
+    actor_hits=int(hits[index].get_text().replace(',','')) #<strong>116,657</strong>   #116657
+    movie_titles=movies[index].select('li a span') # 한 배우당 필모들이 하나의 리스트로 되어 있으므로 한 배우당 for문으로 영화들을 뽑아내야함
+    movie_title_list=list()
+
+    for movie_title in movie_titles:
+                movie_title_list.append(movie_title.get_text()) #필모들을 리스트로 만들기
+        
+    actor_info_dict=dict()
+    actor_info_dict['배우이름']=actor_name
+    actor_info_dict['흥행지수']=actor_hits
+    actor_info_dict['출연영화']=movie_title_list
+
+    actor_link="http://www.cine21.com"+actor["href"] #이제 이 주소로 다시 크롤링
+    res_actor=requests.get(actor_link)#이번에는 get형식임
+    soup_actor=BeautifulSoup(res_actor.content,'html.parser')
+    default_info=soup_actor.select_one('ul.default_info')
+    actor_details=default_info.select('li')#<ul class="default_info"> 이거는 안 봐도 되니까
+    
+
+    for actor_item in actor_details:
+        actor_item_field=actor_item.select_one('span.tit').get_text()
+        actor_item_value=re.sub('<span.*?>.*?</span>', '', str(actor_item)) #반드시 string으로 re를 해줘야 함!
+        actor_item_value=re.sub('<.+?>', '', actor_item_value) 
+        actor_info_dict[actor_item_field]=actor_item_value
+    actor_info_list.append(actor_info_dict)
+
+    
+
+
+
+
