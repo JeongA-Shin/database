@@ -2,20 +2,21 @@ import requests
 from bs4 import BeautifulSoup
 import pymysql
 import re
+
+
 '''
 CREATE TABLE life(
-    id INT NOT NULL,
+    ranking INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    id BIGINT NOT NULL,
     image BLOB, 
     title VARCHAR(100),
     price INT,
-    review INT,
-    PRIMARY KEY(id)
+    review INT
 )DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 '''
 
-item_info_list=list()
-db = pymysql.connect(host='localhost', port=3306, user='root', passwd='anjfgkfksmsakfdldi0613!', db='naver_life', charset='utf8')
+db = pymysql.connect(host='localhost', port=3306, user='root', passwd='anjfgkfksmsakfdldi0613!', db='naver_shopping', charset='utf8')
 #print(db) 연결확인
 
 cursor = db.cursor()
@@ -23,10 +24,14 @@ cursor = db.cursor()
 res = requests.get('https://search.shopping.naver.com/best100v2/detail.nhn?catId=50000008&listType=B10002')
 soup = BeautifulSoup(res.content, 'html.parser')
 
-#productListArea > ul > li:nth-child(1)
+
+item_info_list=list()
+
 items = soup.select('ul.type_normal li')
-for item in items:
+for index,item in enumerate(items):
     item_info_dict=dict()
+    ranking=index+1
+    item_info_dict['ranking']=ranking
     item_info_dict['id']=int(item['data-nv-mid'])
     item_info_dict['image']=1 #아직 모름
     item_info_dict['title']=item.select_one('p.cont a').get_text()
@@ -42,10 +47,13 @@ for item in items:
 
 for item_info in item_info_list:
     print(item_info)
-    sql="""INSERT INTO life(id,image,title,price,review) VALUES("""
-    ###여기서 왜 오류가 나는지 모르겠다 ㅠㅠㅠ
-    +str(item_info['id'])+""","""+pymysql.NULL+""","""+item_info['title']+"""
-    ,"""+str(item_info['price'])+""","""+str(item_info['review'])+""");"""
+    sql = """INSERT INTO life(ranking, id, image, title, price, review) VALUES(
+        '""" + str(item_info['ranking']) + """',
+        '""" + str(item_info['id']) + """',
+        '""" + pymysql.NULL + """',
+        '""" + item_info['title'] + """',
+        '""" + str(item_info['price']) + """',
+        '""" + str(item_info['review']) + """')"""
     cursor.execute(sql)
 
 db.commit()
